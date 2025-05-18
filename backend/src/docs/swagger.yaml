@@ -1,0 +1,478 @@
+openapi: 3.0.0
+info:
+  title: BKG
+  description: A simple API to demonstrate Swagger with Node.js
+  version: 1.0.0
+tags:
+  - name: Authorization
+    description: Endpoints for Authorization
+  - name: Product
+    description: Endpoints for Products
+  - name: Category
+    description: Endpoints for Category
+  - name: ContentBlock
+    description: Endpoints for contentBlock
+components:
+  schemas:
+    Product:
+      properties:
+        name:
+          type: string
+          description: "The name/title of the product as displayed to users."
+          example: "Apple Iphone 15 Pro Max"
+
+        description:
+          type: string
+          description: "A detailed description of the product including specifications and features."
+          example: "Apple iPhone 15 Pro Max with 256gb storage"
+
+        price:
+          type: number
+          description: "The selling price of the product in INR (Indian Rupees)."
+          example: 129999
+
+        categoryId:
+          type: string
+          description: "The unique ID of the category this product belongs to."
+          example: 67c89d6a2aad0d54f793aaef
+
+        productTags:
+          type: string
+          description: "The tags specify the catagory of the products"
+          enum:
+            - sale
+            - best-deal
+            - featured
+            - trending
+            - popular-search
+
+        stock:
+          type: number
+          description: "The number of units of the product currently available in inventory."
+          example: 500
+
+        brand:
+          type: string
+          description: "The manufacturer or brand of the product."
+          example: "apple"
+
+        images:
+          type: array
+          description: "A list of image URLs showing different views of the product."
+          items:
+            type: string
+            example: "https://example.com/images/iphone15promax.jpg"
+
+        ratings:
+          type: object
+          description: "Customer ratings summary of the product."
+          properties:
+            avgNumber:
+              type: number
+              description: "Average customer rating for the product, typically on a 1–5 scale."
+              example: 4.8
+
+        specification:
+          type: array
+          description: Product's specification
+          items:
+            type: object
+            properties:
+            name:
+              type: string
+              exmaple: "Processor"
+            value:
+              type: string
+              example: "M11"
+
+    ContentBlock:
+      properties:
+        type:
+          type: string
+          description: Specifies the type of content block to be displayed on the page
+          enum:
+            - slider
+            - banner
+            - promotion
+            - category-highlight
+
+        identifier:
+          type: string
+          description: A unique key to identify the specific content block instance
+          enum:
+            - homepage-hero-slider
+            - mid-page-sale-banner
+            - category-banner-electronics
+            - footer-banner
+
+        title:
+          type: string
+          description: The title or heading of the content block
+
+        description:
+          type: string
+          description: A brief description providing more details about the content block
+
+        images:
+          type: array
+          description: A list of image URLs to be used in the content block
+          items:
+            type: string
+
+        redirectLinks:
+          type: array
+          description: A list of corresponding links users will be redirected to when interacting with the images or banners
+          items:
+            type: string
+
+        isActive:
+          type: boolean
+          description: Determines whether the content block is currently active and visible
+          example: true
+
+paths:
+  /api/users/signup:
+    post:
+      tags:
+        - Authorization
+      summary: Register user data
+      description: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: User's first name
+                  example: Jhon
+
+                lastName:
+                  type: string
+                  description: User's last name
+                  example: Doe
+
+                email:
+                  type: string
+                  description: User's email
+                  example: Jhon123@gmail.com
+
+                password:
+                  type: string
+                  description: User's password
+                  example: jhon@123
+      responses:
+        "201":
+          description: Registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "User registered successfully"
+  /api/users/login:
+    post:
+      tags:
+        - Authorization
+      summary: Login by credentials
+      description: Login by credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email
+                  example: Jhon123@gmail.com
+
+                password:
+                  type: string
+                  description: User's password
+                  example: Jhon@123
+      responses:
+        "200":
+          description: Login successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example:
+                      firstName: Jhon
+                      lastName: Doe
+                      email: abc@gmail.com
+                      profilePhoto: string
+
+  /api/products:
+    post:
+      tags:
+        - Product
+      summary: Add a new product
+      description: Add a new product to the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Product create successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Product create successfully"
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/Product"
+
+    get:
+      tags:
+        - Product
+      summary: Get all products
+      description: Retrieve a list of all products
+      responses:
+        "200":
+          description: Product fetchd successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Product fetched successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "Apple Iphone 15 Pro Max"
+                        description:
+                          type: string
+                          example: "Apple iPhone 15 Pro Max with 256gb storage"
+                        price:
+                          type: number
+                          example: 129999
+                        categoryId:
+                          type: number
+                          example: "catId"
+                        stock:
+                          type: number
+                          example: 500
+                        images:
+                          type: array
+                          items:
+                            type: string
+                            example: "https://example.com/images/iphone15promax.jpg"
+                        ratings:
+                          type: object
+                          properties:
+                            avgNumber:
+                              type: number
+                              example: 4.8
+  /api/product/products/{id}:
+    put:
+      tags:
+        - Product
+      summary: Update product
+      description: Update product to the database.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The Unique ID of the product to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Product updated successfully"
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/Product"
+    delete:
+      tags:
+        - Product
+      summary: Delete product
+      description: Delete product to the database.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The Unique ID of the product to delete.
+          schema:
+            type: string
+
+      responses:
+        "201":
+          description: Products deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Product deleted successfully"
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/Product"
+
+  /api/category/categories:
+    get:
+      tags:
+        - Category
+      summary: Get all categories
+      description: Retrieve a list of all available categories.
+      responses:
+        "200":
+          description: Categories fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: stirng
+                    example: "Categories fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        categoryId:
+                          type: string
+                          example: "cat123"
+                        name:
+                          type: stirng
+                          example: "Electronics"
+                        description:
+                          type: string
+                          example: "All electronic gadgets and accessories"
+
+    post:
+      tags:
+        - Category
+      summary: Create a new category
+      description: Adds a new category to the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categoryId:
+                  type: string
+                  example: "cat123"
+                  description: Unique identifier for the category
+                name:
+                  type: string
+                  example: "Electronics"
+                  description: Category name
+                description:
+                  type: string
+                  example: "All electronic gadgets and accessories"
+                  description: A brief description of the category
+      responses:
+        "201":
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Category created successfully"
+                  data:
+                    type: object
+                    properties:
+                      categoryId:
+                        type: string
+                        example: "Cat123"
+                      name:
+                        type: string
+                        example: "Electronics"
+                      description:
+                        type: string
+                        example: "All electronic gadgets and accessories"
+
+  /api/content-blocks:
+    post:
+      tags:
+        - ContentBlock
+      summary: Add a new contentBlock
+      description: Add a new contentBlock to the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/ContentBlock"
+
+      responses:
+        "201":
+          description: ContentBlock create successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ContentBlock"
+
+    get:
+      tags:
+        - ContentBlock
+      summary: Get filtred contentBlock
+      description: Get filtred contentBlock from the database.
+      parameters:
+        - name: identifier
+          in: query
+          description: Filter contentBlock by type
+          required: false
+          schema:
+            type: string
+            example: homepage-hero-slider
+      responses:
+        "200":
+          description: contentBlock fetched successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: "#/components/schemas/ContentBlock"
